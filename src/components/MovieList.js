@@ -6,6 +6,9 @@ const MovieList = (props) => {
             <div className="container">
             <div className="row">
                 <div className="col s12">
+                    <p>Sortuj:</p>
+                    <button>Popularność</button>  <button>Data wydania</button>
+                    <br></br>
                     {
                         props.movies.map((movie, i) => {
                             return (

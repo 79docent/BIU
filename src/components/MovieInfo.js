@@ -5,7 +5,7 @@ const MovieInfo = (props) => {
         <div className="container">
             <div className="row" onClick={props.closeMovieInfo} style={{ cursor: "pointer", paddingTop: 50}}>
                 <i className="fas fa-arrow-left"></i>
-                <span style={{marginLeft: 10}}>Go back</span>
+                <span style={{marginLeft: 10}}>Powrót</span>
             </div>
             <div className="row">
                 <div className="col s12 m4">
@@ -21,7 +21,10 @@ const MovieInfo = (props) => {
                         <p>{props.currentMovie.overview}</p>
                         <p>Średnia ocen: {props.currentMovie.vote_average}</p>
                         <p>Oddane głosy: {props.currentMovie.vote_count}</p>
-                        <p>{props.currentMovie.genre}</p>
+                        <div>Gatunki filmu: {props.currentMovieGenre.map(genre => <div key={genre.id}><li key={genre.id}>{genre.name}</li></div>)}</div>
+                        
+                        
+
                     </div>
                 </div>
             </div>   

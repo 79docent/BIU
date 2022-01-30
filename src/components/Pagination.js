@@ -13,9 +13,9 @@ const Pagination = (props) => {
         <div className="container">
             <div className="row">
                 <ul className="pagination">
-                    { props.currentPage > 1 ? <li className={`waves-effect`} onClick={() => props.nextPage(props.currentPage - 1)}><a href="#">Prev</a></li> : ''}
+                    { props.currentPage > 1 ? <li className={`waves-effect`} onClick={() => props.nextPage(props.currentPage - 1)}><a href="#">Poprzednia</a></li> : ''}
                     { pageLinks }
-                    { props.currentPage < props.pages + 1 ? <li className={`waves-effect`} onClick={() => props.nextPage(props.currentPage + 1)}><a href="#">Next</a></li> : ''}
+                    { props.currentPage < props.pages + 1 ? <li className={`waves-effect`} onClick={() => props.nextPage(props.currentPage + 1)}><a href="#">Następna</a></li> : ''}
                 </ul>
             </div>
         </div>

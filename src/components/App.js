@@ -7,6 +7,8 @@ import MovieInfo from "./MovieInfo";
 
 class App extends Component {
 
+  
+
   constructor() {
     super()
     this.state = {
@@ -14,7 +16,8 @@ class App extends Component {
       searchTerm: '',
       totalResults: 0,
       currentPage: 1,
-      currentMovie: null
+      currentMovie: null,
+      currentMovieGenre: []
     }
     this.apiKey = process.env.REACT_APP_API
   }
@@ -31,6 +34,7 @@ class App extends Component {
     })
   }
 
+
   handleChange = (e) => {
     this.setState({ searchTerm: e.target.value })
   }
@@ -45,11 +49,21 @@ class App extends Component {
   }
 
   viewMovieInfo = (id) => {
-    const filteredMovie = this.state.movies.filter(movie => movie.id == id)
+    fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${this.apiKey}&language=en-US`)
+    .then(data => data.json())
+    .then(data => {
+      
 
-    const newCurrentMovie = filteredMovie.length > 0 ? filteredMovie[0] : null
-  
-    this.setState({ currentMovie: newCurrentMovie })
+      const filteredMovie = this.state.movies.filter(movie => movie.id == id)
+
+      const newCurrentMovie = filteredMovie.length > 0 ? filteredMovie[0] : null
+    
+      this.setState({ currentMovie: newCurrentMovie , currentMovieGenre: data.genres})
+
+      console.log(this.state.currentMovieGenre)
+    })
+
+ 
 
   }
 
@@ -62,7 +76,7 @@ class App extends Component {
     return (
       <div className="App">
         <Nav></Nav> 
-        { this.state.currentMovie == null ? <div><SearchArea handleSubmit={this.handleSubmit} handleChange={this.handleChange}></SearchArea><MovieList currentMovie={this.state.currentMovie} viewMovieInfo={this.viewMovieInfo} movies={this.state.movies}></MovieList></div> : <MovieInfo currentMovie={this.state.currentMovie} closeMovieInfo={this.closeMovieInfo}></MovieInfo>}
+        { this.state.currentMovie == null ? <div><SearchArea handleSubmit={this.handleSubmit} handleChange={this.handleChange}></SearchArea><MovieList currentMovie={this.state.currentMovie} viewMovieInfo={this.viewMovieInfo} movies={this.state.movies}></MovieList></div> : <MovieInfo currentMovie={this.state.currentMovie} closeMovieInfo={this.closeMovieInfo} currentMovieGenre={this.state.currentMovieGenre}></MovieInfo>}
         { this.state.totalResults > 20 && this.state.currentMovie == null ? <Pagination pages={numberPages} nextPage={this.nextPage} currentPage={this.state.currentPage}></Pagination> : ''}
       </div>
     );
