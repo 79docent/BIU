@@ -1,18 +1,26 @@
-import React from "react";
+import React, { useCallback, useEffect, useState, } from "react";
 import Movie from "./Movie";
 
 const MovieList = (props) => {
+    const [movies, setMovies] = useState([]);
+
+    useEffect(() => {
+        if (props.movies) setMovies(props.movies);
+    }, [props]);
+
+
+
     return (
             <div className="container">
             <div className="row">
                 <div className="col s12">
-                    <p>Sortuj:</p>
-                    <button>Popularność</button>  <button>Data wydania</button>
-                    <br></br>
+                    {console.log(movies)}
                     {
-                        props.movies.map((movie, i) => {
+                        movies.map((movie, i) => {
                             return (
-                                <Movie key={i} viewMovieInfo={props.viewMovieInfo} movieId={movie.id} image={movie.poster_path}/>
+                                <div key={i}>
+                                    <Movie viewMovieInfo={props.viewMovieInfo} movieId={movie.id} image={movie.poster_path}/>
+                                </div>
                             )
                         })
                     }
@@ -20,7 +28,10 @@ const MovieList = (props) => {
             </div>
         </div>
     )
-    
 }
+
+
+
+
 
 export default MovieList;

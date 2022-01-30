@@ -1,87 +1,100 @@
-import React, { Component } from "react";
+import React, { useState} from "react";
 import Nav from './Nav';
 import SearchArea from "./SearchArea";
 import MovieList from "./MovieList";
 import Pagination from "./Pagination";
 import MovieInfo from "./MovieInfo";
 
-class App extends Component {
+const App = () =>  {
+  const moviesObject = {
+    movies: [],
+    searchTerm: '',
+    totalResults: 0,
+    currentPage: 1,
+    currentMovie: null,
+    currentMovieGenre: []
+  };
 
-  
+  const [loading, setLoading] = useState(false);
+  const [state, setState] = useState(moviesObject);
 
-  constructor() {
-    super()
-    this.state = {
-      movies: [],
-      searchTerm: '',
-      totalResults: 0,
-      currentPage: 1,
-      currentMovie: null,
-      currentMovieGenre: []
-    }
-    this.apiKey = process.env.REACT_APP_API
-  }
+  const apiKey = process.env.REACT_APP_API
 
-
-  handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch(`https://api.themoviedb.org/3/search/movie?api_key=${this.apiKey}&query=${this.state.searchTerm}`)
+    setLoading(true)
+    fetch(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${state.searchTerm}`)
+    .then(data => data.json())
+    .then(data => {
+      console.log(data.results)
+      setState({ movies: [...data.results], totalResults: data.total_results })
+    })
+    .then(setLoading(false));
+  }
+
+  const handleChange = (e) => {
+    setState({ searchTerm: e.target.value })
+  }
+
+  const nextPage = (pageNumber) => {
+    setLoading(true);
+    fetch(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${state.searchTerm}&page=${pageNumber}`)
     .then(data => data.json())
     .then(data => {
       console.log(data);
-      this.setState({ movies: [...data.results], totalResults: data.total_results})
+      setState({ movies: [...data.results], currentPage: pageNumber })
     })
+    .then(setLoading(false));
   }
 
-
-  handleChange = (e) => {
-    this.setState({ searchTerm: e.target.value })
-  }
-
-  nextPage = (pageNumber) => {
-    fetch(`https://api.themoviedb.org/3/search/movie?api_key=${this.apiKey}&query=${this.state.searchTerm}&page=${pageNumber}`)
+  const viewMovieInfo = (id) => {
+    fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=en-US`)
     .then(data => data.json())
     .then(data => {
-      console.log(data);
-      this.setState({ movies: [...data.results], currentPage: pageNumber })
-    })
-  }
 
-  viewMovieInfo = (id) => {
-    fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${this.apiKey}&language=en-US`)
-    .then(data => data.json())
-    .then(data => {
-      
-
-      const filteredMovie = this.state.movies.filter(movie => movie.id == id)
+      const filteredMovie = state.movies.filter(movie => movie.id === id)
 
       const newCurrentMovie = filteredMovie.length > 0 ? filteredMovie[0] : null
-    
-      this.setState({ currentMovie: newCurrentMovie , currentMovieGenre: data.genres})
+      
+      setState({ currentMovie: newCurrentMovie , currentMovieGenre: data.genres})
 
-      console.log(this.state.currentMovieGenre)
+      console.log(data);
     })
-
- 
-
   }
 
-  closeMovieInfo = () => {
-    this.setState({ currentMovie: null })
-  }
-
-  render() {
-    const numberPages = Math.floor(this.state.totalResults / 20);
-    return (
-      <div className="App">
-        <Nav></Nav> 
-        { this.state.currentMovie == null ? <div><SearchArea handleSubmit={this.handleSubmit} handleChange={this.handleChange}></SearchArea><MovieList currentMovie={this.state.currentMovie} viewMovieInfo={this.viewMovieInfo} movies={this.state.movies}></MovieList></div> : <MovieInfo currentMovie={this.state.currentMovie} closeMovieInfo={this.closeMovieInfo} currentMovieGenre={this.state.currentMovieGenre}></MovieInfo>}
-        { this.state.totalResults > 20 && this.state.currentMovie == null ? <Pagination pages={numberPages} nextPage={this.nextPage} currentPage={this.state.currentPage}></Pagination> : ''}
-      </div>
-    );
-  }
+  const sortByPopularity = () => {
+    const sortedMovies = state?.movies.sort((a, b) => a.popularity > b.popularity ? -1 : 1);
+    setState({ movies: [...sortedMovies]})
 }
 
+  const closeMovieInfo = () => {
+    setState({ currentMovie: null })
+  }
 
+ 
+    const numberPages = Math.floor(state.totalResults / 20);
+
+    return (
+      <div className="App">
+        {console.log(state)}
+        <Nav/>
+        { !loading ? <>
+          { state.currentMovie == null ? 
+          <div>
+            <SearchArea handleSubmit={handleSubmit} handleChange={handleChange}></SearchArea>
+                    <p>Sortuj:</p>
+                    <p><a href="#" onClick={() => sortByPopularity()}>Popularność</a></p>
+                    <br></br>
+            <MovieList currentMovie={state.currentMovie} viewMovieInfo={viewMovieInfo} movies={state.movies} />
+          </div> 
+            : 
+          <MovieInfo currentMovie={state.currentMovie} closeMovieInfo={closeMovieInfo} currentMovieGenre={state.currentMovieGenre} />}
+
+          { state.totalResults > 20 && state.currentMovie == null ? <Pagination pages={numberPages} nextPage={nextPage} currentPage={state.currentPage} /> : ''}</> : <h1>test</h1> 
+        }
+      </div>
+    );
+
+  }
 export default App;
