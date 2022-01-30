@@ -3,6 +3,7 @@ import Nav from './Nav';
 import SearchArea from "./SearchArea";
 import MovieList from "./MovieList";
 import Pagination from "./Pagination";
+import MovieInfo from "./MovieInfo";
 
 class App extends Component {
 
@@ -13,6 +14,7 @@ class App extends Component {
       searchTerm: '',
       totalResults: 0,
       currentPage: 1,
+      currentMovie: null
     }
     this.apiKey = process.env.REACT_APP_API
   }
@@ -42,14 +44,26 @@ class App extends Component {
     })
   }
 
+  viewMovieInfo = (id) => {
+    const filteredMovie = this.state.movies.filter(movie => movie.id == id)
+
+    const newCurrentMovie = filteredMovie.length > 0 ? filteredMovie[0] : null
+  
+    this.setState({ currentMovie: newCurrentMovie })
+
+  }
+
+  closeMovieInfo = () => {
+    this.setState({ currentMovie: null })
+  }
+
   render() {
     const numberPages = Math.floor(this.state.totalResults / 20);
     return (
       <div className="App">
         <Nav></Nav> 
-        <SearchArea handleSubmit={this.handleSubmit} handleChange={this.handleChange}></SearchArea>
-        <MovieList movies={this.state.movies}></MovieList>
-        { this.state.totalResults > 20 ? <Pagination pages={numberPages} nextPage={this.nextPage} currentPage={this.state.currentPage}></Pagination> : ''}
+        { this.state.currentMovie == null ? <div><SearchArea handleSubmit={this.handleSubmit} handleChange={this.handleChange}></SearchArea><MovieList currentMovie={this.state.currentMovie} viewMovieInfo={this.viewMovieInfo} movies={this.state.movies}></MovieList></div> : <MovieInfo currentMovie={this.state.currentMovie} closeMovieInfo={this.closeMovieInfo}></MovieInfo>}
+        { this.state.totalResults > 20 && this.state.currentMovie == null ? <Pagination pages={numberPages} nextPage={this.nextPage} currentPage={this.state.currentPage}></Pagination> : ''}
       </div>
     );
   }
