@@ -19,6 +19,7 @@ const MovieInfo = (props) => {
                         <p>Średnia ocen: {props.currentMovie.vote_average}</p>
                         <p>Oddane głosy: {props.currentMovie.vote_count}</p>
                         <p>Popularność: {props.currentMovie.popularity}</p>
+                        <p>Język filmu: {props.currentMovie.original_language}</p>
                         <div>Gatunki filmu: {props.currentMovieGenre.map(genre => <div key={genre.id}><li>{genre.name}</li></div>)}</div>
         
 
