@@ -14,7 +14,6 @@ const MovieList = (props) => {
             <div className="container">
             <div className="row">
                 <div className="col s12">
-                    {console.log(movies)}
                     {
                         movies.map((movie, i) => {
                             return (

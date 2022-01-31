@@ -1,4 +1,5 @@
 import React, { useState} from "react";
+import { Routes, Route } from "react-router-dom";
 import Nav from './Nav';
 import SearchArea from "./SearchArea";
 import MovieList from "./MovieList";
@@ -68,6 +69,11 @@ const App = () =>  {
     setState({ movies: [...sortedMovies]})
 }
 
+const sortByReleaseDate = () => {
+  const sortedMovies = state?.movies.sort((a, b) => a.release_date > b.release_date ? -1 : 1);
+  setState({ movies: [...sortedMovies]})
+}
+
   const closeMovieInfo = () => {
     setState({ currentMovie: null })
   }
@@ -79,13 +85,18 @@ const App = () =>  {
       <div className="App">
         {console.log(state)}
         <Nav/>
+        
         { !loading ? <>
           { state.currentMovie == null ? 
           <div>
-            <SearchArea handleSubmit={handleSubmit} handleChange={handleChange}></SearchArea>
-                    <p>Sortuj:</p>
-                    <p><a href="#" onClick={() => sortByPopularity()}>Popularność</a></p>
+            <Routes> 
+              <Route path="/" index element={<SearchArea handleSubmit={handleSubmit} handleChange={handleChange}/>}/>
+            </Routes>
+              <div className="card-image waves-effect waves-block waves-light center">
+                    <p>Sortuj według:</p>
+                    <p><a href="#" onClick={() => sortByPopularity()}>Popularność</a> | <a href="#" onClick={() => sortByReleaseDate()}>Data premiery</a></p>
                     <br></br>
+              </div>
             <MovieList currentMovie={state.currentMovie} viewMovieInfo={viewMovieInfo} movies={state.movies} />
           </div> 
             : 
@@ -93,6 +104,7 @@ const App = () =>  {
 
           { state.totalResults > 20 && state.currentMovie == null ? <Pagination pages={numberPages} nextPage={nextPage} currentPage={state.currentPage} /> : ''}</> : <h1>test</h1> 
         }
+        
       </div>
     );
 

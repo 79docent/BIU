@@ -12,8 +12,8 @@ const Movie = (props) => {
                 </div>     
 
                 <div className="card-content">
-                    <p>{props.name}</p>
-                    <p><a href="#" onClick={() => props.viewMovieInfo(props.movieId)}>Zobacz szczegóły</a></p>
+                    <p></p>
+                    <p><a href="#" className="" onClick={() => props.viewMovieInfo(props.movieId)}>Zobacz szczegóły</a></p>
                 </div> 
 
             </div>
