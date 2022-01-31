@@ -20,6 +20,7 @@ const MovieInfo = (props) => {
                         <p>Oddane głosy: {props.currentMovie.vote_count}</p>
                         <p>Popularność: {props.currentMovie.popularity}</p>
                         <div>Gatunki filmu: {props.currentMovieGenre.map(genre => <div key={genre.id}><li>{genre.name}</li></div>)}</div>
+        
 
 
                     </div>

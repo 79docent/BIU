@@ -28,7 +28,6 @@ const App = () =>  {
     fetch(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${state.searchTerm}`)
     .then(data => data.json())
     .then(data => {
-      console.log(data.results)
       setState({ movies: [...data.results], totalResults: data.total_results })
     })
     .then(setLoading(false));
@@ -43,7 +42,6 @@ const App = () =>  {
     fetch(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${state.searchTerm}&page=${pageNumber}`)
     .then(data => data.json())
     .then(data => {
-      console.log(data);
       setState({ movies: [...data.results], currentPage: pageNumber })
     })
     .then(setLoading(false));
@@ -74,6 +72,11 @@ const sortByReleaseDate = () => {
   setState({ movies: [...sortedMovies]})
 }
 
+const sortByVotes = () => {
+  const sortedMovies = state?.movies.sort((a, b) => a.vote_count > b.vote_count ? -1 : 1);
+  setState({ movies: [...sortedMovies]})
+}
+
   const closeMovieInfo = () => {
     setState({ currentMovie: null })
   }
@@ -83,7 +86,6 @@ const sortByReleaseDate = () => {
 
     return (
       <div className="App">
-        {console.log(state)}
         <Nav/>
         
         { !loading ? <>
@@ -94,7 +96,7 @@ const sortByReleaseDate = () => {
             </Routes>
               <div className="card-image waves-effect waves-block waves-light center">
                     <p>Sortuj według:</p>
-                    <p><a href="#" onClick={() => sortByPopularity()}>Popularność</a> | <a href="#" onClick={() => sortByReleaseDate()}>Data premiery</a></p>
+                    <p><a href="#" onClick={() => sortByPopularity()}>Popularność</a> | <a href="#" onClick={() => sortByReleaseDate()}>Data premiery</a> | <a href="#" onClick={() => sortByVotes()}>Liczba głosów</a></p>
                     <br></br>
               </div>
             <MovieList currentMovie={state.currentMovie} viewMovieInfo={viewMovieInfo} movies={state.movies} />
