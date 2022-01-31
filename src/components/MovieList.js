@@ -6,9 +6,8 @@ const MovieList = (props) => {
 
     useEffect(() => {
         if (props.movies) setMovies(props.movies);
+        console.log(props.movies);
     }, [props]);
-
-
 
     return (
             <div className="container">
@@ -18,7 +17,7 @@ const MovieList = (props) => {
                         movies.map((movie, i) => {
                             return (
                                 <div key={i}>
-                                    <Movie viewMovieInfo={props.viewMovieInfo} movieId={movie.id} image={movie.poster_path}/>
+                                    <Movie viewMovieInfo={props.viewMovieInfo} movieName={movie.title} movieId={movie.id} image={movie.poster_path}/>
                                 </div>
                             )
                         })

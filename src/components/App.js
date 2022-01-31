@@ -13,11 +13,13 @@ const App = () =>  {
     totalResults: 0,
     currentPage: 1,
     currentMovie: null,
+    currentCast: null,
     currentMovieGenre: []
   };
 
   const [loading, setLoading] = useState(false);
   const [state, setState] = useState(moviesObject);
+  const [errors, setErrors] = useState('');
 
   const apiKey = process.env.REACT_APP_API
 
@@ -34,7 +36,12 @@ const App = () =>  {
   }
 
   const handleChange = (e) => {
-    setState({ searchTerm: e.target.value })
+    if (e.target.value.length < 3) {
+      setErrors('Input must be 3 chars+ long');
+    } else {
+      setState({ searchTerm: e.target.value });
+      setErrors('');
+    }
   }
 
   const nextPage = (pageNumber) => {
@@ -48,17 +55,13 @@ const App = () =>  {
   }
 
   const viewMovieInfo = (id) => {
-    fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=en-US`)
+    fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&append_to_response=credits,trailers,images`)
     .then(data => data.json())
     .then(data => {
-
       const filteredMovie = state.movies.filter(movie => movie.id === id)
-
       const newCurrentMovie = filteredMovie.length > 0 ? filteredMovie[0] : null
-      
-      setState({ currentMovie: newCurrentMovie , currentMovieGenre: data.genres})
-
-      console.log(data);
+      setState({ currentMovie: newCurrentMovie, currentMovieGenre: data.genres, currentCast: data.credits, currentTrailers: data.trailers, currentImages: data.images})
+      console.log("movies: " + data);
     })
   }
 
@@ -92,7 +95,7 @@ const sortByVotes = () => {
           { state.currentMovie == null ? 
           <div>
             <Routes> 
-              <Route path="/" index element={<SearchArea handleSubmit={handleSubmit} handleChange={handleChange}/>}/>
+              <Route path="/" index element={<SearchArea handleSubmit={handleSubmit} handleChange={handleChange} errors={errors}/>}/>
             </Routes>
               <div className="card-image waves-effect waves-block waves-light center">
                     <p>Sortuj według:</p>
@@ -102,7 +105,14 @@ const sortByVotes = () => {
             <MovieList currentMovie={state.currentMovie} viewMovieInfo={viewMovieInfo} movies={state.movies} />
           </div> 
             : 
-          <MovieInfo currentMovie={state.currentMovie} closeMovieInfo={closeMovieInfo} currentMovieGenre={state.currentMovieGenre} />}
+          <MovieInfo 
+            currentMovie={state.currentMovie}
+            closeMovieInfo={closeMovieInfo} 
+            currentMovieGenre={state.currentMovieGenre} 
+            currentCast={state.currentCast} 
+            currentTrailers={state.currentTrailers} 
+            currentImages={state.currentImages}
+          />}
 
           { state.totalResults > 20 && state.currentMovie == null ? <Pagination pages={numberPages} nextPage={nextPage} currentPage={state.currentPage} /> : ''}</> : <h1>test</h1> 
         }

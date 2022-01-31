@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
+import Youtube from "react-youtube";
 
 const MovieInfo = (props) => {
+    useEffect(() => {
+        console.log(props);
+    }, [props]);
+
     return (
         <div className="container">
             <br></br>
@@ -20,10 +25,20 @@ const MovieInfo = (props) => {
                         <p>Oddane głosy: {props.currentMovie.vote_count}</p>
                         <p>Popularność: {props.currentMovie.popularity}</p>
                         <p>Język filmu: {props.currentMovie.original_language}</p>
-                        <div>Gatunki filmu: {props.currentMovieGenre.map(genre => <div key={genre.id}><li>{genre.name}</li></div>)}</div>
-        
-
-
+                        <p>Gatunki filmu: {props.currentMovieGenre.map(genre => <div key={genre.id}><li>{genre.name}</li></div>)}</p>
+                        <p>Rezyseria: {props.currentCast.crew.map(crew => 
+                            crew.job == "Director" ? crew.name : null
+                        )}</p>
+                        <p>Obsada: {props.currentCast.cast.map(cast => cast.name + ", ")}</p>
+                        {props.currentTrailers.youtube[0].source ? 
+                            <Youtube videoId={props.currentTrailers.youtube[0].source}/>
+                        :
+                            null
+                            }
+                        {props.currentImages.backdrops.slice(0, 5).map(
+                            image => <img src={'https://image.tmdb.org/t/p/w500/' + `${image.file_path}`}/>
+                        )}
+                        <br></br><a href={`https://www.themoviedb.org/movie/${props.currentMovie.id}`}>Czytaj więcej</a>
                     </div>
                 </div>
             </div>   
